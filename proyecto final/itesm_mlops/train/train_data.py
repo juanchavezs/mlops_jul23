@@ -1,92 +1,87 @@
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.linear_model import LogisticRegression
-from sklearn.compose import ColumnTransformer
-from preprocess.preprocess_data import (
-    MissingIndicator,
-    ExtractLetters,
-    CategoricalImputer,
-    NumericalImputer,
-    RareLabelCategoricalEncoder,
-    OneHotEncoder,
-    FeatureSelector,
-    OrderingFeatures
-)
+import os
+import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score  # Clustering evaluation metrics
 
-class TitanicDataPipeline:
+import joblib  # For saving and loading machine learning models
+
+class Clustering:
     """
-    A class representing the Titanic data processing and modeling pipeline.
+    A class for performing KMeans clustering analysis and saving models.
 
     Attributes:
-        NUMERICAL_VARS (list): A list of numerical variables in the dataset.
-        CATEGORICAL_VARS_WITH_NA (list): A list of categorical variables with missing values.
-        NUMERICAL_VARS_WITH_NA (list): A list of numerical variables with missing values.
-        CATEGORICAL_VARS (list): A list of categorical variables in the dataset.
-        SEED_MODEL (int): A seed value for reproducibility.
+    min_n_clusters (int): Minimum number of clusters for analysis.
+    max_n_clusters (int): Maximum number of clusters for analysis.
+    kmeans_distortions (list): List to store model distortions for different hyperparameters (n_clusters).
+    models_dir (str): Directory to save trained models.
 
     Methods:
-        create_pipeline(): Create and return the Titanic data processing pipeline.
+    load_kmeans_model(self, n_clusters): Load a KMeans clustering model from a file.
+    predict_clusters(self, data, n_clusters): Predict clusters using a loaded KMeans model.
+    make_models(self, df_transform): Build KMeans clustering models and save them.
+    save_kmeans_model(self, model, n_clusters): Save a trained KMeans model to a file.
     """
-    
-    def __init__(self, seed_model, numerical_vars, categorical_vars_with_na,
-                 numerical_vars_with_na, categorical_vars, selected_features):
-        self.SEED_MODEL = seed_model
-        self.NUMERICAL_VARS = numerical_vars
-        self.CATEGORICAL_VARS_WITH_NA = categorical_vars_with_na
-        self.NUMERICAL_VARS_WITH_NA = numerical_vars_with_na
-        self.CATEGORICAL_VARS = categorical_vars
-        self.SEED_MODEL = seed_model
-        self.SELECTED_FEATURES = selected_features
-        
-        
-    def create_pipeline(self):
-        """
-        Create and return the Titanic data processing pipeline.
+    min_n_clusters = 2
+    max_n_clusters = 8
+    kmeans_distortions = []  # Model distortions for different hyperparameters(n_clusters)
+    models_dir = '../models/'  # Directory to save models
 
-        Returns:
-            Pipeline: A scikit-learn pipeline for data processing and modeling.
-        """
-        self.PIPELINE = Pipeline(
-            [
-                                ('missing_indicator', MissingIndicator(variables=self.NUMERICAL_VARS)),
-                                ('cabin_only_letter', ExtractLetters()),
-                                ('categorical_imputer', CategoricalImputer(variables=self.CATEGORICAL_VARS_WITH_NA)),
-                                ('median_imputation', NumericalImputer(variables=self.NUMERICAL_VARS_WITH_NA)),
-                                ('rare_labels', RareLabelCategoricalEncoder(tol=0.05, variables=self.CATEGORICAL_VARS)),
-                                ('dummy_vars', OneHotEncoder(variables=self.CATEGORICAL_VARS)),
-                                ('feature_selector', FeatureSelector(self.SELECTED_FEATURES)),
-                                ('aligning_feats', OrderingFeatures()),
-                                ('scaling', MinMaxScaler()),
-                              ]
-        )
-        return self.PIPELINE
+    def __init__(self):
+        if not os.path.exists(self.models_dir):
+            os.makedirs(self.models_dir)
+
+    def fit(self, data):
+        return self 
     
-    def fit_logistic_regression(self, X_train, y_train):
+    def save_kmeans_model(self, model, n_clusters) -> None:
         """
-        Fit a Logistic Regression model using the predefined data preprocessing pipeline.
+        Save the trained KMeans clustering model to a file.
 
         Parameters:
-        - X_train (pandas.DataFrame or numpy.ndarray): The training input data.
-        - y_train (pandas.Series or numpy.ndarray): The target values for training.
+        model: Trained KMeans model to be saved.
+        n_clusters (int): Number of clusters in the model.
 
         Returns:
-        - logistic_regression_model (LogisticRegression): The fitted Logistic Regression model.
+        None
+
+        Description:
+        This method saves the trained KMeans clustering model to a file in the specified models directory.
+
+        - 'model': Trained KMeans model to be saved.
+        - 'n_clusters': Number of clusters associated with the model.
+        - 'model_filename': Generate a filename for the model based on the number of clusters.
+        - Save the KMeans model using the joblib.dump function.
+        - Print a confirmation message indicating the successful saving of the model.
         """
-        logistic_regression = LogisticRegression(C=0.0005, class_weight='balanced', random_state=self.SEED_MODEL)
-        pipeline = self.create_pipeline()
-        pipeline.fit(X_train, y_train)
-        logistic_regression.fit(pipeline.transform(X_train), y_train)
-        return logistic_regression
-    
-    def transform_test_data(self, X_test):
+        model_filename = f"{self.models_dir}kmeans_{n_clusters}_clusters_model.pkl"
+        joblib.dump(model, model_filename)
+        print(f"Saved KMeans model with {n_clusters} clusters to {model_filename}")
+       
+    def make_models(self, df_transform: pd.DataFrame) -> None:
         """
-        Apply the data preprocessing pipeline on the test data.
+        Build KMeans clustering models for various numbers of clusters and save the models.
 
         Parameters:
-        - X_test (pandas.DataFrame or numpy.ndarray): The test input data.
+        df_transform (pd.DataFrame): DataFrame with transformed data for clustering.
 
         Returns:
-        - transformed_data (pandas.DataFrame or numpy.ndarray): The preprocessed test data.
+        None
+
+        Description:
+        This method constructs KMeans clustering models with varying numbers of clusters
+        and evaluates the models using the silhouette score. It also saves the KMeans models
+        for future use.
+
+        - 'df_transform': DataFrame containing the transformed data for clustering.
+        - 'metrics': A list to store silhouette scores for different numbers of clusters.
+        - Iterate through a range of cluster numbers from 'min_n_clusters' to 'max_n_clusters'.
+        - Create a KMeans model with the specified number of clusters and fit it to the transformed data.
+        - Save the trained KMeans model using the 'save_kmeans_model' method.
         """
-        pipeline = self.create_pipeline()
-        return pipeline.transform(X_test)
+        metrics = []  # metrics: silhouette score
+        for n_clusters in range(Clustering.min_n_clusters, Clustering.max_n_clusters + 1):
+            kmeans = KMeans(n_clusters=n_clusters, init="k-means++", n_init=10, max_iter=280, random_state=42)
+            pred = kmeans.fit_predict(df_transform)
+            labels = pd.DataFrame(pred, columns=['Labels'], index=df_transform.index)
+            self.save_kmeans_model(kmeans, n_clusters)  # Save KMeans model
+            print('Model {} saved'.format(n_clusters))

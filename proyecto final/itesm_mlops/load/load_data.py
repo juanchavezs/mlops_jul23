@@ -55,6 +55,6 @@ class WebDataRetriever:
 # Example
 # URL = 'https://raw.githubusercontent.com/juanchavezs/mlops_jpcs_proyectofinal/master/marketing_campaign.csv'
 # DELIMITER = '\t'
-# data_retriever = WebDataRetriever(url= URL, delimiter_url= DELIMITER , data_path= './data/')
+# data_retriever = WebDataRetriever(url= URL, delimiter_url= DELIMITER , data_path= '../data/')
 # result = data_retriever.retrieve_data()
 # print(result)

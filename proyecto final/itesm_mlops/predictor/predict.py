@@ -2,6 +2,10 @@ import argparse
 import joblib
 from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
+from datetime import datetime
+from sklearn.decomposition import PCA  # Principal Component Analysis for dimensionality reduction
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler # Data preprocessing
 
 class DataPreprocessor(BaseEstimator, TransformerMixin):
     def __init__(self):
@@ -126,7 +130,7 @@ class LoadAndPredict:
     load_kmeans_model(self, n_clusters): Load a KMeans clustering model.
     predict_clusters(self, data, n_clusters): Predict clusters using a loaded KMeans model.
     """
-    models_dir = './models/'
+    models_dir = '../models/'
 
     def load_kmeans_model(self, n_clusters):
         """
@@ -190,7 +194,7 @@ if __name__ == "__main__":
     LoadAndPredict = LoadAndPredict()
 
     # Load new data for prediction
-    df = pd.read_csv("./data/retrieved_data.csv")  # Replace with your new data file
+    df = pd.read_csv("../data/retrieved_data.csv")  # Replace with your new data file
 
     # Prepare data
     df = DataPreprocessor.feature_generation('/',df)

@@ -1,9 +1,8 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_array
 import pandas as pd
-import re
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder  # Data preprocessing
+from sklearn.preprocessing import MinMaxScaler  # Data preprocessing
 from datetime import datetime  # For working with dates and times
 from sklearn.decomposition import PCA  # Principal Component Analysis for dimensionality reduction
 
