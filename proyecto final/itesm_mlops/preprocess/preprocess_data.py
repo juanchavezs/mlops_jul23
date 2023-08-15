@@ -3,629 +3,129 @@ from sklearn.utils.validation import check_array
 import pandas as pd
 import re
 import numpy as np
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder  # Data preprocessing
+from datetime import datetime  # For working with dates and times
+from sklearn.decomposition import PCA  # Principal Component Analysis for dimensionality reduction
 
-class MissingIndicator(BaseEstimator, TransformerMixin):
-    """
-    Custom scikit-learn transformer to create indicator features for missing values in specified variables.
 
-    Parameters:
-        variables (list or str, optional): List of column names (variables) to create indicator features for.
-            If a single string is provided, it will be treated as a single variable. Default is None.
-
-    Attributes:
-        variables (list): List of column names (variables) to create indicator features for.
-
-    Methods:
-        fit(X, y=None):
-            This method does not perform any actual training or fitting.
-            It returns the transformer instance itself.
-
-        transform(X):
-            Creates indicator features for missing values in the specified variables and returns the modified DataFrame.
-
-    Example usage:
-    ```
-    from sklearn.pipeline import Pipeline
-
-    # Instantiate the custom transformer
-    missing_indicator = MissingIndicator(variables=['age', 'income'])
-
-    # Define the pipeline with the custom transformer
-    pipeline = Pipeline([
-        ('missing_indicator', missing_indicator),
-        # Other pipeline steps...
-    ])
-
-    # Fit and transform the data using the pipeline
-    X_transformed = pipeline.fit_transform(X)
-    ```
-    """
-    def __init__(self, variables=None):
-        """
-        Initialize the MissingIndicator transformer.
-
-        Parameters:
-            variables (list or str, optional): List of column names (variables) to create indicator features for.
-                If a single string is provided, it will be treated as a single variable. Default is None.
-        """
-        if not isinstance(variables, list):
-            self.variables = [variables]
-        else:
-            self.variables = variables
-
-    def fit(self, X, y=None):
-        """
-        This method does not perform any actual training or fitting, as indicator features are created based on data.
-        It returns the transformer instance itself.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed. Not used in this method.
-            y (pd.Series or np.array, optional): Target variable. Not used in this method.
-
-        Returns:
-            self (MissingIndicator): The transformer instance.
-        """
-        return self
-
-    def transform(self, X):
-        """
-        Creates indicator features for missing values in the specified variables and returns the modified DataFrame.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed.
-
-        Returns:
-            X_transformed (pd.DataFrame): Transformed DataFrame with additional indicator features for missing values.
-        """
-        X = X.copy()
-        for var in self.variables:
-            X[f'{var}_nan'] = X[var].isnull().astype(int)
-
-        return X
-    
-class ExtractLetters(BaseEstimator, TransformerMixin):
-    """
-    Custom scikit-learn transformer to extract letters from a specified variable.
-
-    Parameters:
-        None
-
-    Attributes:
-        variable (str): The name of the column (variable) from which letters will be extracted.
-
-    Methods:
-        fit(X, y=None):
-            This method does not perform any actual training or fitting.
-            It returns the transformer instance itself.
-
-        transform(X):
-            Extracts letters from the specified variable and returns the modified DataFrame.
-
-    Example usage:
-    ```
-    from sklearn.pipeline import Pipeline
-
-    # Instantiate the custom transformer
-    extractor = ExtractLetters()
-
-    # Define the pipeline with the custom transformer
-    pipeline = Pipeline([
-        ('extractor', extractor),
-        # Other pipeline steps...
-    ])
-
-    # Fit and transform the data using the pipeline
-    X_transformed = pipeline.fit_transform(X)
-    ```
-    """
+class DataPreprocessor(BaseEstimator, TransformerMixin):
     def __init__(self):
-        """
-        Initialize the ExtractLetters transformer.
-
-        Parameters:
-            None
-        """
-        self.variable = 'cabin'
-
-    def fit(self, X, y=None):
-        """
-        This method does not perform any actual training or fitting, as it is not necessary for this transformer.
-        It returns the transformer instance itself.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed. Not used in this method.
-            y (pd.Series or np.array, optional): Target variable. Not used in this method.
-
-        Returns:
-            self (ExtractLetters): The transformer instance.
-        """
-        return self
-
-    def transform(self, X):
-        """
-        Extracts letters from the specified variable and returns the modified DataFrame.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed.
-
-        Returns:
-            X_transformed (pd.DataFrame): Transformed DataFrame with letters extracted from the specified variable.
-        """
-        X = X.copy()
-        X[self.variable] = X[self.variable].apply(lambda x: ''.join(re.findall("[a-zA-Z]+", x)) if type(x)==str else x)
-        return X
+        pass
     
-class CategoricalImputer(BaseEstimator, TransformerMixin):
-    """
-    Custom scikit-learn transformer to impute missing values in categorical variables.
-
-    Parameters:
-        variables (list or str, optional): List of column names (variables) to impute missing values for.
-            If a single string is provided, it will be treated as a single variable. Default is None.
-
-    Attributes:
-        variables (list): List of column names (variables) to impute missing values for.
-
-    Methods:
-        fit(X, y=None):
-            This method does not perform any actual training or fitting.
-            It returns the transformer instance itself.
-
-        transform(X):
-            Imputes missing values in the specified categorical variables and returns the modified DataFrame.
-
-    Example usage:
-    ```
-    from sklearn.pipeline import Pipeline
-
-    # Instantiate the custom transformer
-    imputer = CategoricalImputer(variables=['category1', 'category2'])
-
-    # Define the pipeline with the custom transformer
-    pipeline = Pipeline([
-        ('imputer', imputer),
-        # Other pipeline steps...
-    ])
-
-    # Fit and transform the data using the pipeline
-    X_transformed = pipeline.fit_transform(X)
-    ```
-    """
-    def __init__(self, variables=None):
-        """
-        Initialize the CategoricalImputer transformer.
-
-        Parameters:
-            variables (list or str, optional): List of column names (variables) to impute missing values for.
-                If a single string is provided, it will be treated as a single variable. Default is None.
-        """
-        self.variables = [variables] if not isinstance(variables, list) else variables
-
     def fit(self, X, y=None):
-        """
-        This method does not perform any actual training or fitting, as imputation is based on data.
-        It returns the transformer instance itself.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed. Not used in this method.
-            y (pd.Series or np.array, optional): Target variable. Not used in this method.
-
-        Returns:
-            self (CategoricalImputer): The transformer instance.
-        """
         return self
-
+  
     def transform(self, X):
+        df_transformed = self.feature_generation(X)
+        df_transformed = self.remove_outliers(df_transformed, 'Income')
+        df_transformed = self.scaling_func(df_transformed)
+        df_transformed = self.dim_reduction(df_transformed)
+        return df_transformed
+
+    def feature_generation(self,data: pd.DataFrame) -> pd.DataFrame:        
         """
-        Imputes missing values in the specified categorical variables and returns the modified DataFrame.
+        Generates and adds new features to the provided DataFrame.
 
         Parameters:
-            X (pd.DataFrame): Input data to be transformed.
+        data (pd.DataFrame): DataFrame containing the original data.
 
         Returns:
-            X_transformed (pd.DataFrame): Transformed DataFrame with missing values imputed for the specified categorical variables.
+        pd.DataFrame: DataFrame with the generated and added features.
         """
-        X = X.copy()
-        for var in self.variables:
-            X[var] = X[var].fillna('Missing')
-        return X
+        # Calculate client age
+        data['Age'] = datetime.now().year - data['Year_Birth']  
+        
+        # Calculate number of years since customer registration
+        registration_year = pd.to_datetime(data['Dt_Customer'], format='%d-%m-%Y').apply(lambda x: x.year)
+        current_year = datetime.now().year
+        data['Years_Since_Registration'] = current_year - registration_year 
+
+        # Encode Education
+        data["Education"] = data["Education"].replace({"Basic": 0, "Graduation": 1, "2n Cycle": 2, "Master": 2, "PhD": 3})
+        
+        # Calculate total amount spent on products
+        mnt_cols = ['MntWines', 'MntFruits', 'MntMeatProducts', 'MntFishProducts', 'MntSweetProducts', 'MntGoldProds']
+        data['Sum_Mnt'] = data[mnt_cols].sum(axis=1)
+        
+        # Calculate number of companies in which the client accepted the offer
+        accepted_cmp_cols = ['AcceptedCmp1', 'AcceptedCmp2', 'AcceptedCmp3', 'AcceptedCmp4', 'AcceptedCmp5', 'Response']
+        data['Num_Accepted_Cmp'] = data[accepted_cmp_cols].sum(axis=1)
+
+        # Calculate total number of purchases
+        total_purchases = ['NumWebPurchases', 'NumCatalogPurchases', 'NumStorePurchases']
+        data['Num_Total_Purchases'] = data[total_purchases].sum(axis=1)
+
+        # Drop missing values and unnecessary columns
+        data.dropna(inplace=True)
+        data.drop(['Year_Birth', 'Z_CostContact', 'Z_Revenue', 'Dt_Customer', 'Marital_Status'], axis=1, inplace=True)
     
-class NumericalImputer(BaseEstimator, TransformerMixin):
-    """
-    Custom scikit-learn transformer to impute missing values in numerical variables.
+        # Apply one-hot encoding for remaining categorical features
+        data = pd.get_dummies(data)
 
-    Parameters:
-        variables (list or str, optional): List of column names (variables) to impute missing values for.
-            If a single string is provided, it will be treated as a single variable. Default is None.
+        return data
 
-    Attributes:
-        variables (list): List of column names (variables) to impute missing values for.
-        median_dict_ (dict): Dictionary to store the median values for each specified numerical variable during fitting.
-
-    Methods:
-        fit(X, y=None):
-            Calculates the median values for the specified numerical variables from the training data.
-            It returns the transformer instance itself.
-
-        transform(X):
-            Imputes missing values in the specified numerical variables using the median values and returns the modified DataFrame.
-
-    Example usage:
-    ```
-    from sklearn.pipeline import Pipeline
-
-    # Instantiate the custom transformer
-    imputer = NumericalImputer(variables=['age', 'income'])
-
-    # Define the pipeline with the custom transformer
-    pipeline = Pipeline([
-        ('imputer', imputer),
-        # Other pipeline steps...
-    ])
-
-    # Fit and transform the data using the pipeline
-    X_transformed = pipeline.fit_transform(X)
-    ```
-    """
-    def __init__(self, variables=None):
+    def remove_outliers(self,data: pd.DataFrame, column: str) -> pd.DataFrame:
         """
-        Initialize the NumericalImputer transformer.
+        Removes outliers from the specified column of the provided DataFrame.
 
         Parameters:
-            variables (list or str, optional): List of column names (variables) to impute missing values for.
-                If a single string is provided, it will be treated as a single variable. Default is None.
-        """
-        self.variables = [variables] if not isinstance(variables, list) else variables
-
-    def fit(self, X, y=None):
-        """
-        Calculates the median values for the specified numerical variables from the training data.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed.
+        data (pd.DataFrame): DataFrame containing the data.
+        column (str): Name of the column to remove outliers from.
 
         Returns:
-            self (NumericalImputer): The transformer instance.
-        """
-        self.median_dict = {}
-        for var in self.variables:
-            self.median_dict[var] = X[var].median()
-        return self
+        pd.DataFrame: DataFrame with outliers removed from the specified column.
 
-
-    def transform(self, X):
+        Description:
+        This function identifies and removes outliers from the specified column using the Interquartile Range (IQR) method.
         """
-        Imputes missing values in the specified numerical variables using the median values and returns the modified DataFrame.
+        q3, q1 = np.nanpercentile(data[column], [75, 25])
+        iqr = q3 - q1
+        upper_bound = q3 + 1.5 * iqr
+        lower_bound = q1 - 1.5 * iqr
+        data = data[(data[column] > lower_bound) & (data[column] < upper_bound)]
+        return data
+
+    def scaling_func(self, data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Applies Min-Max scaling to the provided DataFrame.
 
         Parameters:
-            X (pd.DataFrame): Input data to be transformed.
+        data (pd.DataFrame): DataFrame containing the data to be scaled.
 
         Returns:
-            X_transformed (pd.DataFrame): Transformed DataFrame with missing values imputed for the specified numerical variables.
+        pd.DataFrame: DataFrame with Min-Max scaled values.
+
+        Description:
+        This function performs Min-Max scaling on the provided DataFrame to scale the features within a specified range.
         """
-        X = X.copy()
-        for var in self.variables:
-            X[var] = X[var].fillna(self.median_dict[var])
-        return X
+        mms = MinMaxScaler()
+        return pd.DataFrame(data=mms.fit_transform(data), columns=data.columns)
+
+    @staticmethod
+    def dim_reduction(data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Performs dimensionality reduction using Principal Component Analysis (PCA) on the provided DataFrame.
+
+        Parameters:
+        data (pd.DataFrame): DataFrame containing the data for dimensionality reduction.
+
+        Returns:
+        pd.DataFrame: DataFrame with reduced dimensions using PCA.
+
+        Description:
+        This function applies Principal Component Analysis (PCA) to reduce the dimensionality of the provided DataFrame.
+        """
+        n_components = 8
+        pca = PCA(n_components=n_components, random_state=42)
+        data = pd.DataFrame(pca.fit_transform(data), columns=[f'PC{i}' for i in range(1, n_components + 1)])
+        return data
     
-class RareLabelCategoricalEncoder(BaseEstimator, TransformerMixin):
-    """
-    Custom scikit-learn transformer to encode rare categories in categorical variables.
-
-    Parameters:
-        tol (float, optional): The tolerance level to define rare categories.
-            Categories with a frequency lower than tol will be encoded as 'rare'.
-            Default is 0.05.
-        variables (list or str, optional): List of column names (variables) to encode rare categories for.
-            If a single string is provided, it will be treated as a single variable. Default is None.
-
-    Attributes:
-        tol (float): The tolerance level to define rare categories.
-        variables (list): List of column names (variables) to encode rare categories for.
-        rare_labels_dict (dict): Dictionary to store the rare category labels for each specified categorical variable during fitting.
-
-    Methods:
-        fit(X, y=None):
-            Calculates the rare category labels for the specified categorical variables from the training data.
-            It returns the transformer instance itself.
-
-        transform(X):
-            Encodes rare categories in the specified categorical variables and returns the modified DataFrame.
-
-    Example usage:
-    ```
-    from sklearn.pipeline import Pipeline
-
-    # Instantiate the custom transformer
-    encoder = RareLabelCategoricalEncoder(tol=0.1, variables=['category1', 'category2'])
-
-    # Define the pipeline with the custom transformer
-    pipeline = Pipeline([
-        ('encoder', encoder),
-        # Other pipeline steps...
-    ])
-
-    # Fit and transform the data using the pipeline
-    X_transformed = pipeline.fit_transform(X)
-    ```
-    """
-    def __init__(self, tol=0.05, variables=None):
-        """
-        Initialize the RareLabelCategoricalEncoder transformer.
-
-        Parameters:
-            tol (float, optional): The tolerance level to define rare categories.
-                Categories with a frequency lower than tol will be encoded as 'rare'.
-                Default is 0.05.
-            variables (list or str, optional): List of column names (variables) to encode rare categories for.
-                If a single string is provided, it will be treated as a single variable. Default is None.
-        """
-        self.tol = tol
-        self.variables = [variables] if not isinstance(variables, list) else variables
-
-    def fit(self, X, y=None):
-        """
-        Calculates the rare category labels for the specified categorical variables from the training data.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed.
-
-        Returns:
-            self (RareLabelCategoricalEncoder): The transformer instance.
-        """
-        self.rare_labels_dict = {}
-        for var in self.variables:
-            t = pd.Series(X[var].value_counts() / float(X.shape[0]))
-            self.rare_labels_dict[var] = list(t[t<self.tol].index)
-        return self
-
-    def transform(self, X):
-        """
-        Encodes rare categories in the specified categorical variables and returns the modified DataFrame.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed.
-
-        Returns:
-            X_transformed (pd.DataFrame): Transformed DataFrame with rare categories encoded for the specified categorical variables.
-        """
-        X = X.copy()
-        for var in self.variables:
-            X[var] = np.where(X[var].isin(self.rare_labels_dict[var]), 'rare', X[var])
-        return X
-      
-class OneHotEncoder(BaseEstimator, TransformerMixin):
-    """
-    Custom scikit-learn transformer to perform one-hot encoding for categorical variables.
-
-    Parameters:
-        variables (list or str, optional): List of column names (variables) to perform one-hot encoding for.
-            If a single string is provided, it will be treated as a single variable. Default is None.
-
-    Attributes:
-        variables (list): List of column names (variables) to perform one-hot encoding for.
-        dummies (list): List of column names representing the one-hot encoded dummy variables.
-
-    Methods:
-        fit(X, y=None):
-            Calculates the one-hot encoded dummy variable columns for the specified categorical variables from the training data.
-            It returns the transformer instance itself.
-
-        transform(X):
-            Performs one-hot encoding for the specified categorical variables and returns the modified DataFrame.
-
-    Example usage:
-    ```
-    from sklearn.pipeline import Pipeline
-
-    # Instantiate the custom transformer
-    encoder = OneHotEncoder(variables=['category1', 'category2'])
-
-    # Define the pipeline with the custom transformer
-    pipeline = Pipeline([
-        ('encoder', encoder),
-        # Other pipeline steps...
-    ])
-
-    # Fit and transform the data using the pipeline
-    X_transformed = pipeline.fit_transform(X)
-    ```
-    """
-    def __init__(self, variables=None):
-        """
-        Initialize the OneHotEncoder transformer.
-
-        Parameters:
-            variables (list or str, optional): List of column names (variables) to perform one-hot encoding for.
-                If a single string is provided, it will be treated as a single variable. Default is None.
-        """
-        self.variables = [variables] if not isinstance(variables, list) else variables
-
-    def fit(self, X, y=None):
-        """
-        Calculates the one-hot encoded dummy variable columns for the specified categorical variables from the training data.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed.
-
-        Returns:
-            self (OneHotEncoder): The transformer instance.
-        """
-        self.dummies = pd.get_dummies(X[self.variables], drop_first=True).columns
-        return self
-
-    def transform(self, X):
-        """
-        Performs one-hot encoding for the specified categorical variables and returns the modified DataFrame.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed.
-
-        Returns:
-            X_transformed (pd.DataFrame): Transformed DataFrame with one-hot encoded dummy variables for the specified categorical variables.
-        """
-        X = X.copy()
-        X = pd.concat([X, pd.get_dummies(X[self.variables], drop_first=True)], axis=1)
-        X.drop(self.variables, axis=1)
-
-        # Adding missing dummies, if any
-        missing_dummies = [var for var in self.dummies if var not in X.columns]
-        if len(missing_dummies) != 0:
-            for col in missing_dummies:
-                X[col] = 0
-
-        return X
-
-class FeatureSelector(BaseEstimator, TransformerMixin):
-    """
-    Custom scikit-learn transformer to select specific features (columns) from a DataFrame.
-
-    Parameters:
-        feature_names (list or array-like): List of column names to select as features from the input DataFrame.
-
-    Methods:
-        fit(X, y=None):
-            Placeholder method that returns the transformer instance itself.
-
-        transform(X):
-            Selects and returns the specified features (columns) from the input DataFrame.
-
-    Example usage:
-    ```
-    from sklearn.pipeline import Pipeline
-
-    # Define the feature names to be selected
-    selected_features = ['feature1', 'feature2', 'feature3']
-
-    # Instantiate the custom transformer
-    feature_selector = FeatureSelector(feature_names=selected_features)
-
-    # Define the pipeline with the custom transformer
-    pipeline = Pipeline([
-        ('feature_selector', feature_selector),
-        # Other pipeline steps...
-    ])
-
-    # Fit and transform the data using the pipeline
-    X_transformed = pipeline.fit_transform(X)
-    ```
-    """
-
-    def __init__(self, feature_names):
-        """
-        Initialize the FeatureSelector transformer.
-
-        Parameters:
-            feature_names (list or array-like): List of column names to select as features from the input DataFrame.
-        """
-        self.feature_names = feature_names
-
-    def fit(self, X, y=None):
-        """
-        Placeholder method that returns the transformer instance itself.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed.
-
-        Returns:
-            self (FeatureSelector): The transformer instance.
-        """
-        return self
-
-    def transform(self, X):
-        """
-        Selects and returns the specified features (columns) from the input DataFrame.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed.
-
-        Returns:
-            X_selected (pd.DataFrame): DataFrame containing only the specified features (columns).
-        """
-        return X[self.feature_names]
-
-class OrderingFeatures(BaseEstimator, TransformerMixin):
-    """
-    Custom scikit-learn transformer to order features (columns) in the same order as they appeared in the training data.
-
-    Parameters:
-        None
-
-    Attributes:
-        ordered_features (pd.Index): Index of column names representing the order of features as they appeared in the training data.
-
-    Methods:
-        fit(X, y=None):
-            Records the order of features from the training data and returns the transformer instance itself.
-
-        transform(X):
-            Reorders the features in the same order as they appeared in the training data and returns the modified DataFrame.
-
-    Example usage:
-    ```
-    from sklearn.pipeline import Pipeline
-
-    # Instantiate the custom transformer
-    feature_orderer = OrderingFeatures()
-
-    # Define the pipeline with the custom transformer
-    pipeline = Pipeline([
-        ('feature_orderer', feature_orderer),
-        # Other pipeline steps...
-    ])
-
-    # Fit and transform the data using the pipeline
-    X_transformed = pipeline.fit_transform(X)
-    ```
-    """
-    def __init__(self):
-        """
-        Initialize the OrderingFeatures transformer.
-
-        Parameters:
-            None
-        """
-        return None
-
-    def fit(self, X, y=None):
-        """
-        Records the order of features from the training data.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed.
-
-        Returns:
-            self (OrderingFeatures): The transformer instance.
-        """
-        if isinstance(X, pd.DataFrame):
-            self.ordered_features = X.columns
-            print(self.ordered_features)
-        elif isinstance(X, np.ndarray):
-            self.ordered_features = np.arange(X.shape[1])
-        else:
-            raise ValueError("Input X must be a pandas DataFrame or a numpy array.")
-        return self
-
-    def transform(self, X):
-        """
-        Reorders the features in the same order as they appeared in the training data.
-
-        Parameters:
-            X (pd.DataFrame): Input data to be transformed.
-
-        Returns:
-            X_transformed (pd.DataFrame): Transformed DataFrame with features ordered as they appeared in the training data.
-        """
-
-        if isinstance(X, pd.DataFrame):
-            # print(X[self.ordered_features])
-            # print("return df")
-            DROP_COLS_AFTER = ['pclass', 'sex', 'age', 'sibsp', 'parch', 'fare', 'cabin', 'embarked','title']
-            X[self.ordered_features]
-            X.drop(DROP_COLS_AFTER, axis=1, inplace=True)
-            return X
-        elif isinstance(X, np.ndarray):
-            # print("return np")
-            return X[:, self.ordered_features]
-        else:
-            raise ValueError("Input X must be a pandas DataFrame or a numpy array.")
+# Example Use
+# data_transformer = DataPreprocessor()
+# clustering = Clustering()
+
+# pipeline = Pipeline([
+#     ('data_transformer', data_transformer),
+# ])
+
+# df_transform = pipeline.fit_transform(df)

@@ -1,0 +1,8 @@
+{
+    "project_name": "MLOps Proyect Unsupervised classification algorithm ",
+    "repo_name": "{itesm_mlops}",
+    "author_name": "Juan Pablo Chavez Sainz)",
+    "description": "MLOps final project for the master's degree in artificial intelligence",
+    "open_source_license": ["No license file"],
+    "python_interpreter": ["python 3.10"]
+}
