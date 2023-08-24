@@ -2,7 +2,6 @@ from pydantic import BaseModel
 
 class data_market(BaseModel):
     """
-    - ID: Customer's unique identifier
     - Year_Birth: Customer's birth year
     - Education: Customer's education level
     - Marital_Status: Customer's marital status
@@ -30,7 +29,7 @@ class data_market(BaseModel):
     - AcceptedCmp3: 1 if customer accepted the offer in the 3rd campaign, 0 otherwise
     - AcceptedCmp4: 1 if customer accepted the offer in the 4th campaign, 0 otherwise
     - AcceptedCmp5: 1 if customer accepted the offer in the 5th campaign, 0 otherwise
-    Response: 1 if customer accepted the offer in the last campaign, 0 otherwise
+    - Response: 1 if customer accepted the offer in the last campaign, 0 otherwise
 
 ##### **Place**
 
@@ -39,33 +38,31 @@ class data_market(BaseModel):
     - NumStorePurchases: Number of purchases made directly in stores
     - NumWebVisitsMonth: Number of visits to company’s website in the last month    """
     
-    ID: int  = 1
-    Education: str = 'Graduation'
-    Year_Birth:  int = 1957
-    Marital_Status: str = 'Single'
-    Income: float
-    Kidhome: int  
-    Teenhome: int  
-    Dt_Customer: str = '04-09-2012' 
-    Recency: float  = 50
-    MntWines: float  = 635
-    MntFruits: float  = 88
-    MntMeatProducts: float =  546
-    MntFishProducts: float  = 172
-    MntSweetProducts: float  = 88
-    MntGoldProds: float  =88
-    NumDealsPurchases: float = 3
-    NumWebPurchases: float  = 8
-    NumCatalogPurchases: float = 10
-    NumStorePurchases: float  = 4
-    NumWebVisitsMonth: float  = 7
-    AcceptedCmp3: float  = 0
-    AcceptedCmp4: float  = 0
-    AcceptedCmp5: float  = 0
-    AcceptedCmp1: float  = 0
-    AcceptedCmp2: float  = 0
-    Complain: float  = 0
-    Z_CostContact: float = 3 
-    Z_Revenue: float  = 11
-    Response: float = 1
-    
+    Education: int = 1
+    Income: float = 50000.0
+    Kidhome: int = 0
+    Teenhome: int = 0
+    Recency: int = 30
+    MntWines: int = 100
+    MntFruits: int = 10
+    MntMeatProducts: int = 200
+    MntFishProducts: int = 20
+    MntSweetProducts: int = 5
+    MntGoldProds: int = 3
+    NumDealsPurchases: int = 2
+    NumWebPurchases: int = 5
+    NumCatalogPurchases: int = 3
+    NumStorePurchases: int = 2
+    NumWebVisitsMonth: int = 7
+    AcceptedCmp3: int = 0
+    AcceptedCmp4: int = 0
+    AcceptedCmp5: int = 0
+    AcceptedCmp1: int = 0
+    AcceptedCmp2: int = 0
+    Complain: int = 0
+    Response: int = 0
+    Age: int = 40
+    Years_Since_Registration: int = 5
+    Sum_Mnt: int = 500
+    Num_Accepted_Cmp: int = 1
+    Num_Total_Purchases: int = 10 
